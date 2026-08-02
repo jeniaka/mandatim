@@ -1016,7 +1016,7 @@ function renderCompare(){
   }));
 
   let h = '<thead><tr><th>מפלגה</th>';
-  POLLS.forEach(p => h += `<th>${p.pollster}<br><span style="color:var(--muted-2)">${p.date.slice(8)}.${p.date.slice(5,7)}</span></th>`);
+  POLLS.forEach(p => h += `<th>${p.pollster}${p.publisher && p.publisher !== p.pollster ? `<br><span style="color:var(--muted-2);font-weight:400">${p.publisher}</span>` : ''}<br><span style="color:var(--muted-2)">${p.date.slice(8)}.${p.date.slice(5,7)}</span></th>`);
   h += '<th>ממוצע</th></tr></thead><tbody>';
   rows.forEach(p => {
     h += `<tr><td><i class="dot" style="background:${p.color}"></i>${p.name}</td>`;
@@ -1314,6 +1314,28 @@ function parseWikiDate(txt, fallbackYear){
   if (!y || !mo || !d) return null;
   return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 }
+// שמות חברות סקרים ומפרסמים באנגלית (ויקיפדיה) → עברית
+const FIRM_HE = {
+  'midgam':'מדגם','maagar mochot':'מאגר מוחות','lazar':'לזר',
+  'smith':'סמית','smith consulting':'סמית','geocartography':'גיאוקרטוגרפיה',
+  'direct polls':'דיירקט פולס','filber':'פילבר (לייב דאטה)','kantar':'קנטאר',
+  'panels politics':'פאנלס','panels':'פאנלס','yossi tatika':'יוסי טטיקה',
+  'camil fuchs':'כמיל פוקס','trendzone':'טרנדזון',
+  'stat-net research institute':'סטאט-נט','stat-net':'סטאט-נט',
+  'hamidgam project &stat net':'פרויקט המדגם וסטאט-נט',
+  'viterbi center':'מרכז ויטרבי','timor group':'קבוצת טימור','arpanel':'ארפאנל',
+};
+const PUB_HE = {
+  'hahadashot 12':'חדשות 12','channel 12':'חדשות 12','n12':'חדשות 12','mako':'חדשות 12 (מאקו)',
+  'channel 13':'ערוץ 13','channel 14':'ערוץ 14','maariv':'מעריב','zman israel':'זמן ישראל',
+  'i24 news':'i24NEWS','i24news':'i24NEWS','kan 11':'כאן 11','kan':'כאן 11',
+  'israel hayom':'ישראל היום','walla':'וואלה',
+  'israel democracy institute':'המכון הישראלי לדמוקרטיה',
+};
+function heName(s, map){
+  const clean = String(s || '').replace(/\[.*?\]/g,'').trim();
+  return map[clean.toLowerCase()] || clean;
+}
 function parseWiki(payload){
   const html = payload?.parse?.text?.['*'] || payload?.parse?.text;
   if (!html) throw new Error('התשובה לא מכילה parse.text — בדקו את שם הדף');
@@ -1321,6 +1343,7 @@ function parseWiki(payload){
   const tables = [...doc.querySelectorAll('table.wikitable')];
   log(`ויקיפדיה: ${tables.length} טבלאות בדף`, 'dim');
   const year = new Date().getFullYear();
+  const TODAY = new Date().toISOString().slice(0, 10);
   const polls = [];
   const unknown = new Set();
 
@@ -1341,22 +1364,29 @@ function parseWiki(payload){
       if (cells.length < cols.length - 3) continue;
       const date = parseWikiDate(cells[0]?.textContent || '', year);
       if (!date) continue;
-      const pollster = (cells[1]?.textContent || '').replace(/\[\d+\]/g,'').trim() || 'לא ידוע';
-      const publisher = (cells[2]?.textContent || '').replace(/\[\d+\]/g,'').trim();
+      if (!date.startsWith('2026')) continue;   // רק סקרי מערכת הבחירות לכנסת ה-26
+      if (date > TODAY) continue;                // שורות תרחיש/עתידיות — לא סקר אמיתי
+      const firmRaw = (cells[1]?.textContent || '').replace(/\[\d+\]/g,'').trim();
+      const pubRaw  = (cells[2]?.textContent || '').replace(/\[\d+\]/g,'').trim();
       const res = {};
+      let voteShare = false;
       cols.forEach((pid, i) => {
         if (!pid || i >= cells.length) return;
         const raw = cells[i].textContent.replace(/\[\d+\]/g,'').trim();
         if (/^\(?\d+(\.\d+)?%\)?$/.test(raw)) { res[pid] = 0; return; } // מתחת לאחוז החסימה
+        if (/\d\.\d/.test(raw)) { voteShare = true; return; }          // אחוזי הצבעה, לא מנדטים
         const n = parseInt(raw, 10);
         if (Number.isFinite(n) && n >= 0 && n <= 120) res[pid] = n;
       });
+      if (voteShare) continue;                   // מדלגים על טבלאות אחוזי הצבעה
       const sum = Object.values(res).reduce((a,b)=>a+b,0);
-      if (Object.keys(res).length >= 6 && sum >= 100 && sum <= 122){
-        polls.push({id:`wiki-${date}-${pollster}`, pollster: publisher || pollster, firm: pollster, date, results: res});
+      if (Object.keys(res).length >= 6 && sum >= 112 && sum <= 122){
+        const firm = heName(firmRaw, FIRM_HE) || 'לא ידוע';
+        const pub  = heName(pubRaw, PUB_HE);
+        polls.push({id:`wiki-${date}-${firm}`, pollster: firm, firm, publisher: pub, date, results: res});
       }
     }
-    if (polls.length) break; // הטבלה הראשית מספיקה
+    // לא עוצרים — קוראים את כל טבלאות 2026 ומאחדים
   }
   if (unknown.size) log(`עמודות לא מזוהות: ${[...unknown].join(', ')}`, 'warn');
   if (!polls.length) throw new Error('לא נמצאה טבלת סקרים תקינה — ייתכן שמבנה הדף השתנה');

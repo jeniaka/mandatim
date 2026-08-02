@@ -163,14 +163,17 @@ class Handler(BaseHTTPRequestHandler):
         self._send(404, b"not found", "text/plain; charset=utf-8")
 
     def chat(self):
+        # קוראים את הגוף תמיד קודם — אחרת ב-HTTP/1.1 keep-alive גוף לא-נקרא
+        # שובר את הבקשה הבאה על אותו חיבור (400 Bad request syntax).
+        length = int(self.headers.get("Content-Length", 0) or 0)
+        raw = self.rfile.read(length) if length else b""
+
         if not ANTHROPIC_KEY:
             return self._json(503, {
                 "error": "הצ'אט לא מוגדר בשרת",
                 "hint": "הגדירו את משתנה הסביבה ANTHROPIC_API_KEY",
             })
 
-        length = int(self.headers.get("Content-Length", 0) or 0)
-        raw = self.rfile.read(length) if length else b""
         try:
             body = json.loads(raw or b"{}")
         except Exception:
