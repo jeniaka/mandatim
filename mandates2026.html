@@ -1135,7 +1135,11 @@ async function ask(q){
   holder.innerHTML = '<span class="who">אנליסט</span><span class="typing"><i></i><i></i><i></i></span>';
   chatHistory.push({role:'user', content:q});
   try{
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+    // בתוך Claude המפתח מוזרק אוטומטית לקריאה ישירה. בפריסה עצמאית (origin אמיתי)
+    // מנתבים דרך /api/chat — השרת מחזיק את המפתח, הדפדפן לא רואה אותו לעולם.
+    const viaServer = !SANDBOXED && /^https?:$/.test(location.protocol);
+    const endpoint = viaServer ? '/api/chat' : 'https://api.anthropic.com/v1/messages';
+    const r = await fetch(endpoint, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-6', max_tokens:1000,

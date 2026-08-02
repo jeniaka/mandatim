@@ -26,9 +26,23 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+# קונסולת Windows (cp1255) מפילה הדפסות עם עברית/סמלים; מכריחים UTF-8 בטוח.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 HERE = Path(__file__).resolve().parent
 PAGE = HERE / "mandates2026.html"
 PORT = int(os.environ.get("PORT", 8787))
+
+# ---- צ'אט: פרוקסי ל-Anthropic. המפתח נשאר בצד השרת בלבד ולא מגיע לדפדפן. ----
+ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
+ANTHROPIC_VERSION = "2023-06-01"
+CHAT_MODEL = os.environ.get("MODEL", "claude-sonnet-5").strip()
+CHAT_MAX_TOKENS = 4000  # תקרה קשיחה — מונע ניצול המפתח דרך ה-URL הציבורי
 
 # רק דומיינים ברשימה יעברו דרך הפרוקסי — מונע שימוש בשרת כ-open relay.
 ALLOWED_HOSTS = {
@@ -91,7 +105,12 @@ class Handler(BaseHTTPRequestHandler):
         if route in ("/", "/index.html"):
             return self.serve_page()
         if route == "/api/health":
-            return self._json(200, {"ok": True, "allowed": sorted(ALLOWED_HOSTS)})
+            return self._json(200, {
+                "ok": True,
+                "chat": bool(ANTHROPIC_KEY),
+                "model": CHAT_MODEL if ANTHROPIC_KEY else None,
+                "allowed": sorted(ALLOWED_HOSTS),
+            })
         if route == "/api/fetch":
             return self.proxy(urllib.parse.parse_qs(parts.query))
 
@@ -137,12 +156,64 @@ class Handler(BaseHTTPRequestHandler):
             self._json(502, {"error": f"{type(e).__name__}: {e}"})
             print(f"  ✗ {u.hostname} → {e}")
 
+    def do_POST(self):
+        route = urllib.parse.urlsplit(self.path).path
+        if route == "/api/chat":
+            return self.chat()
+        self._send(404, b"not found", "text/plain; charset=utf-8")
+
+    def chat(self):
+        if not ANTHROPIC_KEY:
+            return self._json(503, {
+                "error": "הצ'אט לא מוגדר בשרת",
+                "hint": "הגדירו את משתנה הסביבה ANTHROPIC_API_KEY",
+            })
+
+        length = int(self.headers.get("Content-Length", 0) or 0)
+        raw = self.rfile.read(length) if length else b""
+        try:
+            body = json.loads(raw or b"{}")
+        except Exception:
+            return self._json(400, {"error": "גוף הבקשה אינו JSON תקין"})
+
+        # השרת מכתיב את הפרמטרים הרגישים — הדפדפן לא יכול לעקוף אותם.
+        body["model"] = CHAT_MODEL
+        body["max_tokens"] = min(int(body.get("max_tokens", 1000) or 1000), CHAT_MAX_TOKENS)
+        body.pop("mcp_servers", None)  # מונע שימוש בשרת כשער חופשי למפתח
+
+        payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
+        req = urllib.request.Request(
+            ANTHROPIC_URL,
+            data=payload,
+            method="POST",
+            headers={
+                "x-api-key": ANTHROPIC_KEY,
+                "anthropic-version": ANTHROPIC_VERSION,
+                "content-type": "application/json",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                data = r.read()
+            self._send(200, data, "application/json; charset=utf-8")
+            print(f"  ✓ chat → {CHAT_MODEL}  ({len(data):,} bytes)")
+        except urllib.error.HTTPError as e:
+            self._send(e.code, e.read(), "application/json; charset=utf-8")
+            print(f"  ✗ chat → HTTP {e.code}")
+        except Exception as e:
+            self._json(502, {"error": f"{type(e).__name__}: {e}"})
+            print(f"  ✗ chat → {e}")
+
 
 def main():
     srv = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     print("\n  מצפה המנדטים")
     print(f"  דף:     http://localhost:{PORT}")
     print(f"  פרוקסי: /api/fetch?url=…   ({len(ALLOWED_HOSTS)} דומיינים מותרים)")
+    if ANTHROPIC_KEY:
+        print(f"  צ'אט:   פעיל, מודל {CHAT_MODEL}")
+    else:
+        print("  צ'אט:   כבוי (הגדירו ANTHROPIC_API_KEY כדי להפעיל)")
     print("  Ctrl+C לעצירה\n")
     try:
         srv.serve_forever()
