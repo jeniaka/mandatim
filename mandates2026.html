@@ -202,13 +202,34 @@ body{
 }
 .slip:hover{transform:translateY(-4px) rotate(-.5deg);box-shadow:0 18px 34px -14px rgba(0,0,0,1), inset -4px 0 0 0 var(--pc,#888)}
 .slip.picked{
-  box-shadow:0 0 0 2px var(--brass), 0 18px 34px -14px rgba(0,0,0,1), inset -4px 0 0 0 var(--pc,#888);
-  transform:translateY(-3px);
+  transform:scale(1.05) translateY(-4px);
+  z-index:2;
+  background:
+    linear-gradient(color-mix(in srgb, var(--pc,#888) 20%, transparent), color-mix(in srgb, var(--pc,#888) 20%, transparent)),
+    var(--paper);
+  box-shadow:
+    0 0 0 4px var(--pc,#888),
+    0 0 26px -2px color-mix(in srgb, var(--pc,#888) 78%, transparent),
+    0 20px 42px -14px rgba(0,0,0,1),
+    inset -8px 0 0 0 var(--pc,#888);
 }
+.slip.picked:hover{transform:scale(1.06) translateY(-7px)}
+.slip.picked .letters{font-size:33px}
+/* תג "נבחר" — עיגול ירוק עם וי, חד-משמעי */
+.slip .pick-badge{
+  position:absolute;top:9px;inset-inline-start:9px;width:27px;height:27px;
+  border-radius:50%;background:#1c7a4f;color:#fff;
+  display:none;align-items:center;justify-content:center;
+  font-size:16px;font-weight:900;line-height:1;
+  box-shadow:0 3px 9px rgba(0,0,0,.45);z-index:3;
+}
+.slip.picked .pick-badge{display:flex}
+/* בבונה הקואליציה: הלא-נבחרים מעומעמים כדי שהנבחרים יבלטו */
+#coalCards .slip:not(.picked):not(.blocked){opacity:.82;filter:saturate(.85)}
 .slip.blocked{opacity:.42;filter:grayscale(.55)}
 .slip .letters{
-  font-family:var(--display);font-weight:900;font-size:30px;line-height:1;
-  letter-spacing:2px;margin-bottom:2px;
+  font-family:var(--display);font-weight:900;font-size:21px;line-height:1;
+  letter-spacing:2px;margin-bottom:2px;transition:font-size .18s ease;
 }
 .slip .letters.tbd{font-size:14px;font-weight:700;color:#8A8375;letter-spacing:0;padding-top:11px}
 .slip .pname{font-weight:700;font-size:16px;line-height:1.25;margin-top:6px}
@@ -364,7 +385,7 @@ pre.snip{
   .countdown{padding:5px 11px}.countdown b{font-size:16px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
   .slip{padding:12px 12px 11px}
-  .slip .letters{font-size:24px}.slip .seats{font-size:27px}
+  .slip .letters{font-size:18px}.slip.picked .letters{font-size:27px}.slip .seats{font-size:27px}
   .panel{padding:16px}
   .chatlog{height:360px}.msg{max-width:92%}
 }
@@ -844,6 +865,7 @@ function cardHTML(p, mode){
     : `<div class="letters tbd">אות טרם נקבעה</div>`;
 
   return `<button class="${cls.join(' ')}" style="--pc:${p.color}" data-id="${p.id}" data-mode="${mode}">
+    <span class="pick-badge" aria-hidden="true">✓</span>
     ${letters}
     <div class="pname">${p.name}</div>
     <div class="plead">${p.leader||'&nbsp;'}</div>
