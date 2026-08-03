@@ -6,7 +6,7 @@
 <title>מצפה המנדטים · בחירות 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Heebo:wght@300;400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    מצפה המנדטים — design tokens
@@ -14,41 +14,41 @@
    פתקי הצבעה בנייר גולמי, פליז מנורה לקו ה-61.
    ============================================================ */
 :root{
-  --ink:        #070C22;
-  --ink-2:      #0B1230;
-  --panel:      #101B40;
-  --panel-2:    #16234F;
-  --panel-3:    #1D2C60;
-  --line:       rgba(150,175,255,.15);
-  --line-2:     rgba(150,175,255,.28);
-  --paper:      #F1ECE1;
-  --paper-2:    #DED6C5;
-  --paper-ink:  #14161C;
-  --brass:      #D9AE55;
-  --brass-2:    #F0CE86;
-  --brass-dim:  #7C6330;
-  --text:       #E9ECFA;
-  --muted:      #93A0C9;
-  --muted-2:    #6B78A3;
-  --danger:     #FF7469;
-  --ok:         #5AD9A6;
-  --warn:       #F0B341;
+  --ink:        #ECE5D5;
+  --ink-2:      #E4DBC8;
+  --panel:      #FBF6EC;
+  --panel-2:    #F5EEDF;
+  --panel-3:    #EADFC8;
+  --line:       rgba(26,23,20,.14);
+  --line-2:     rgba(26,23,20,.26);
+  --paper:      #FCF9F1;
+  --paper-2:    #EFE7D6;
+  --paper-ink:  #1A1714;
+  --brass:      #C42B2B;
+  --brass-2:    #9E1C1C;
+  --brass-dim:  #E8B4B0;
+  --text:       #1A1714;
+  --muted:      #6B6153;
+  --muted-2:    #978B79;
+  --danger:     #C42B2B;
+  --ok:         #1E7A4A;
+  --warn:       #C17A16;
 
-  --display: 'Frank Ruhl Libre', 'Times New Roman', serif;
-  --body: 'Assistant', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display: 'Suez One', 'Times New Roman', serif;
+  --body: 'Heebo', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
 
   --r: 14px;
   --r-sm: 8px;
-  --shadow: 0 18px 50px -18px rgba(0,0,0,.75);
+  --shadow: 0 14px 40px -20px rgba(60,40,20,.4);
 }
 
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
   background:
-    radial-gradient(1100px 600px at 78% -12%, #1A2A63 0%, transparent 62%),
-    radial-gradient(900px 520px at 12% 8%, #12204E 0%, transparent 58%),
+    radial-gradient(1200px 640px at 82% -10%, #F7E1D5 0%, transparent 60%),
+    radial-gradient(900px 520px at 8% 4%, #F1E7D2 0%, transparent 58%),
     var(--ink);
   color:var(--text);
   font-family:var(--body);
@@ -204,14 +204,12 @@ body{
 .slip.picked{
   transform:scale(1.05) translateY(-4px);
   z-index:2;
-  background:
-    linear-gradient(color-mix(in srgb, var(--pc,#888) 20%, transparent), color-mix(in srgb, var(--pc,#888) 20%, transparent)),
-    var(--paper);
+  background:linear-gradient(rgba(196,43,43,.09), rgba(196,43,43,.09)), var(--paper);
   box-shadow:
-    0 0 0 4px var(--pc,#888),
-    0 0 26px -2px color-mix(in srgb, var(--pc,#888) 78%, transparent),
-    0 20px 42px -14px rgba(0,0,0,1),
-    inset -8px 0 0 0 var(--pc,#888);
+    0 0 0 4px var(--brass),
+    0 0 26px -2px rgba(196,43,43,.5),
+    0 20px 42px -14px rgba(60,40,20,.55),
+    inset -9px 0 0 0 var(--pc,#888);
 }
 .slip.picked:hover{transform:scale(1.06) translateY(-7px)}
 .slip.picked .letters{font-size:33px}
@@ -377,6 +375,61 @@ pre.snip{
 .foot{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted-2);font-size:12px;line-height:1.7}
 .foot a{color:var(--muted)}
 
+/* ============================================================
+   ערכת "פוסטר בחירות" — עיצוב בהיר, אפס כחול, אקסנט אדום-קרמין.
+   נטען אחרי כל כללי הבסיס כדי לגבור על הנחות הרקע הכהה.
+   ============================================================ */
+::selection{background:var(--brass);color:#fff}
+:focus-visible{outline-color:var(--brass)}
+.top{background:linear-gradient(to bottom, rgba(236,229,213,.96), rgba(236,229,213,.8));border-bottom:2px solid var(--brass)}
+.envelope{background:linear-gradient(160deg,#C42B2B,#8E1F1F);border:1px solid rgba(0,0,0,.18);box-shadow:inset 0 -8px 14px rgba(0,0,0,.28)}
+.brand small{color:var(--muted)}
+.countdown{border:1px solid var(--line-2);background:rgba(26,23,20,.045)}
+.countdown b{color:var(--brass)}
+.btn{background:rgba(26,23,20,.05);color:var(--text);border:1px solid var(--line-2)}
+.btn:hover{background:rgba(26,23,20,.1);border-color:var(--brass)}
+.btn-primary{background:linear-gradient(175deg,#D4392F,var(--brass));color:#fff;border-color:transparent;box-shadow:0 6px 18px -8px rgba(196,43,43,.6)}
+.btn-primary:hover{background:linear-gradient(175deg,#E0483F,#C42B2B);border-color:transparent}
+.btn-ghost{background:transparent}
+.eyebrow{color:var(--brass)}
+.hero p.lede{color:var(--muted)}
+.chamber-core .big{color:var(--text)}
+.chamber-core .big.is-maj{color:var(--brass);text-shadow:none}
+.blocbar{border:1px solid var(--line-2)}
+.winlbl{color:var(--muted)}
+.wintabs{background:rgba(26,23,20,.05);border:1px solid var(--line)}
+.wintab{color:var(--muted)}
+.wintab:hover{color:var(--text)}
+.wintab[aria-selected="true"]{background:var(--brass);color:#fff;font-weight:700}
+.tabs{background:rgba(26,23,20,.04);border:1px solid var(--line)}
+.tab{color:var(--muted)}
+.tab:hover{color:var(--text)}
+.tab[aria-selected="true"]{background:var(--brass);color:#fff;box-shadow:none;font-weight:700}
+.tag{background:rgba(26,23,20,.06);color:#4E4941}
+.tag.risk{background:rgba(196,43,43,.14);color:#9E1C1C}
+.tag.var{background:rgba(26,23,20,.1);color:#5B5348}
+.tag.veto{background:#1A1714;color:#F4EFE3}
+.panel{background:var(--panel);border:1px solid var(--line)}
+.meter{background:rgba(26,23,20,.09)}
+.meter i{background:linear-gradient(90deg,#9E1C1C,var(--brass))}
+.meter .mark{background:#1A1714;box-shadow:0 0 8px rgba(26,23,20,.45)}
+.verdict{background:rgba(26,23,20,.03)}
+.verdict.good{border-color:rgba(30,122,74,.5);background:rgba(30,122,74,.09)}
+.verdict.bad{border-color:rgba(196,43,43,.42);background:rgba(196,43,43,.08)}
+.chip{background:rgba(26,23,20,.045);border:1px solid var(--line-2);color:var(--muted)}
+.chip:hover{color:var(--brass);border-color:var(--brass);background:rgba(196,43,43,.08)}
+.sw i{background:rgba(26,23,20,.2)}
+.sw input:checked + i{background:rgba(196,43,43,.3);border-color:var(--brass)}
+.sw input:checked + i::after{background:var(--brass)}
+tbody tr:hover td{background:rgba(26,23,20,.045)}
+.pill.ok{color:var(--ok);border-color:rgba(30,122,74,.5)}
+.pill.fail{color:var(--danger);border-color:rgba(196,43,43,.45)}
+.pill.unk{color:var(--warn);border-color:rgba(193,122,22,.45)}
+.src{background:rgba(26,23,20,.03)}
+input[type=text],input[type=url],textarea.code{background:#fff;border:1px solid var(--line-2);color:var(--text)}
+.console{background:#1F1B16;border:1px solid var(--line);color:#D9CDBA}
+pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:640px){
   .wrap{padding:0 14px 70px}
@@ -444,7 +497,6 @@ pre.snip{
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-v="map">מפת המנדטים</button>
     <button class="tab" role="tab" aria-selected="false" data-v="coal">בונה הקואליציה</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="ai">שאל את האנליסט</button>
     <button class="tab" role="tab" aria-selected="false" data-v="cmp">קרב הסוקרים</button>
     <button class="tab" role="tab" aria-selected="false" data-v="src">מקורות ורענון</button>
   </div>
@@ -488,27 +540,12 @@ pre.snip{
           <div class="stat"><span>תמיכה מבחוץ</span><b id="sOutside">0</b></div>
           <div class="verdict" id="verdict"><h4>עדיין ריק</h4><div style="font-size:13px;color:var(--muted)">בחרו מפלגה ראשונה כדי להתחיל.</div></div>
           <button class="btn btn-sm btn-ghost" id="btnClear" style="margin-top:14px;width:100%">נקה הכל</button>
-          <button class="btn btn-sm" id="btnAskCoal" style="margin-top:7px;width:100%">שאל את האנליסט על הקואליציה הזו</button>
         </div>
         <div class="panel">
           <h3>הנחות עבודה</h3>
           <p class="sub">כללי הווטו הם פרשנות להצהרות פומביות, לא עובדה. כבו הנחה כדי לבדוק תרחיש.</p>
           <div id="assumptions"></div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ---------- VIEW: AI ---------- -->
-  <section class="view" id="v-ai">
-    <div class="panel">
-      <h3>האנליסט</h3>
-      <p class="sub">שאלות על גושים, סבירויות והרכבות. האנליסט מקבל את נתוני הסקרים הנוכחיים ואת הקואליציה שבניתם — התשובות הן הערכה מנומקת, לא תחזית.</p>
-      <div class="chips" id="qchips"></div>
-      <div class="chatlog" id="chatlog"></div>
-      <div class="composer">
-        <textarea id="chatInput" rows="1" placeholder="למשל: מה הסיכוי שליברמן יסכים לשבת עם ש״ס אם זה התנאי ל־61?"></textarea>
-        <button class="btn btn-primary" id="btnSend">שלח</button>
       </div>
     </div>
   </section>
@@ -582,6 +619,8 @@ http.createServer(async (req, res) => {
   </section>
 
   <div class="foot">
+    <div style="font-family:var(--display);color:var(--brass);font-size:15px;margin-bottom:4px">נבנה ועוצב ע״י Evgeny Keidar</div>
+    <div style="margin-bottom:14px">מצפה המנדטים · דשבורד סקרים לכנסת ה־26 · &copy; 2026 Evgeny Keidar. כל הזכויות שמורות.</div>
     <strong style="color:var(--muted)">מקורות ומגבלות.</strong>
     נתוני הבסיס: מעריב (31.07), זמן ישראל (30.07), ערוץ 14 (29.07), חדשות 13 (29.07) ו־i24NEWS (27.07), נכון ל־31.07.2026. שאר המקורות נמשכים חיים בלשונית המקורות ומתמזגים לאותה בריכה, עם ניכוי כפילויות לפי סוקר ותאריך · מועד הבחירות לכנסת ה־26 נקבע ל־27.10.2026 על ידי יו״ר ועדת הבחירות המרכזית.
     שמות יושבי ראש ואותיות פתק מוזנים ידנית בקובץ ואפשר לערוך אותם — אותיות לרשימות חדשות ייקבעו רק עם הגשת הרשימות.
@@ -1085,7 +1124,7 @@ function renderCompare(){
           <div style="position:absolute;top:0;bottom:0;border-radius:99px;background:${d>=0?'var(--brass)':'#5A96F0'};
             ${d>=0 ? `left:50%;width:${w}%` : `right:50%;width:${w}%`}"></div>
         </div>
-        <b style="min-width:66px;text-align:left;color:${d>=0?'var(--brass-2)':'#8FB8E8'}">${x.v} (${d>=0?'+':''}${d.toFixed(1)})</b>
+        <b style="min-width:66px;text-align:left;color:${d>=0?'var(--brass-2)':'#0E6B62'}">${x.v} (${d>=0?'+':''}${d.toFixed(1)})</b>
       </div>`;
     }).join('');
 }
@@ -1514,8 +1553,6 @@ document.addEventListener('click', e => {
   }
   const pre = e.target.closest('[data-preset]');
   if (pre){ coalition = new Set(PRESETS[+pre.dataset.preset].ids.filter(id => seatsOf(id) > 0)); renderCoalition(); return; }
-  const chip = e.target.closest('#qchips .chip');
-  if (chip){ ask(chip.textContent); return; }
 });
 document.addEventListener('change', e => {
   const as = e.target.dataset.as;
@@ -1537,17 +1574,7 @@ document.getElementById('btnReset').onclick   = () => {
   recompute(); renderAll(); renderWindow(); renderSources();
   log('הבריכה נוקתה. נשארו רק נתוני הבסיס.', 'ok');
 };
-document.getElementById('btnSend').onclick = () => ask(document.getElementById('chatInput').value);
-document.getElementById('chatInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); ask(e.target.value); }
-});
-document.getElementById('btnAskCoal').onclick = () => {
-  go('ai');
-  const st = coalitionStats();
-  ask(st.inside.length
-    ? `בניתי קואליציה של ${st.inside.map(i=>P[i].name).join(', ')} עם ${st.seats} מנדטים. כמה זה ריאלי, ומה הדבר הראשון שישבור אותה?`
-    : 'עוד לא בניתי קואליציה. לפי הנתונים הנוכחיים, מה המסלול הכי סביר להרכבת ממשלה?');
-};
+/* צ'אט AI הוסר לבקשת המשתמש */
 document.getElementById('btnPaste').onclick = () => {
   const p = document.getElementById('pastePanel');
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
@@ -1595,8 +1622,6 @@ renderAssumptions();
 renderSources();
 renderWindow();
 renderEnv();
-document.getElementById('qchips').innerHTML = QCHIPS.map(q=>`<button class="chip">${q}</button>`).join('');
-pushMsg('assistant', 'שלום. יש לי מולי את ממוצע חמשת הסקרים האחרונים ואת חלוקת הגושים. אפשר לשאול על סבירויות הרכבה, על פערים בין סוקרים, או על מה שבניתם בלשונית הקואליציה.');
 </script>
 </body>
 </html>
