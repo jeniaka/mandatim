@@ -430,6 +430,43 @@ input[type=text],input[type=url],textarea.code{background:#fff;border:1px solid 
 .console{background:#1F1B16;border:1px solid var(--line);color:#D9CDBA}
 pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
 
+/* ============================================================
+   מצב כהה — נבחר דרך data-theme="dark" על :root. גובר על ערכת
+   הפוסטר בזכות specificity גבוה יותר. פתקי ההצבעה נשארים בהירים.
+   ============================================================ */
+:root[data-theme="dark"]{
+  --ink:#1B1712; --ink-2:#221D17; --panel:#241F18; --panel-2:#2B2519; --panel-3:#352E22;
+  --line:rgba(240,233,220,.14); --line-2:rgba(240,233,220,.26);
+  --paper:#FBF7EE; --paper-2:#EFE7D6; --paper-ink:#1A1714;
+  --brass:#E0483F; --brass-2:#F0857C; --brass-dim:#5A2420;
+  --text:#F1EADB; --muted:#B0A491; --muted-2:#847968;
+  --danger:#E0483F; --ok:#57C088; --warn:#E0A63A;
+}
+:root[data-theme="dark"] body{
+  background:
+    radial-gradient(1200px 640px at 82% -10%, #3A2420 0%, transparent 60%),
+    radial-gradient(900px 520px at 8% 4%, #241E17 0%, transparent 58%),
+    var(--ink);
+}
+:root[data-theme="dark"] .top{background:linear-gradient(to bottom, rgba(27,23,18,.96), rgba(27,23,18,.8));border-bottom:2px solid var(--brass)}
+:root[data-theme="dark"] .btn{background:rgba(240,233,220,.06);color:var(--text)}
+:root[data-theme="dark"] .btn:hover{background:rgba(240,233,220,.12)}
+:root[data-theme="dark"] .countdown{background:rgba(240,233,220,.05)}
+:root[data-theme="dark"] .tabs,:root[data-theme="dark"] .wintabs{background:rgba(240,233,220,.05)}
+:root[data-theme="dark"] .panel{background:var(--panel)}
+:root[data-theme="dark"] .verdict{background:rgba(240,233,220,.04)}
+:root[data-theme="dark"] .chip{background:rgba(240,233,220,.05)}
+:root[data-theme="dark"] .chip:hover{background:rgba(224,72,63,.16)}
+:root[data-theme="dark"] .meter{background:rgba(0,0,0,.38)}
+:root[data-theme="dark"] .sw i{background:rgba(0,0,0,.45)}
+:root[data-theme="dark"] tbody tr:hover td{background:rgba(240,233,220,.05)}
+:root[data-theme="dark"] .src{background:rgba(0,0,0,.24)}
+:root[data-theme="dark"] .tag{background:rgba(240,233,220,.08);color:var(--muted)}
+:root[data-theme="dark"] .tag.veto{background:#000;color:#F4EFE3}
+:root[data-theme="dark"] input[type=text],
+:root[data-theme="dark"] input[type=url],
+:root[data-theme="dark"] textarea.code{background:rgba(0,0,0,.34);color:var(--text)}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:640px){
   .wrap{padding:0 14px 70px}
@@ -458,6 +495,7 @@ pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
     <div class="countdown" title="27 באוקטובר 2026, ט״ז בחשוון תשפ״ז">
       <b id="cd">—</b><span>ימים לקלפי</span>
     </div>
+    <button class="btn btn-sm btn-ghost" id="btnTheme" aria-label="החלף מצב תצוגה" title="מצב כהה / בהיר" style="font-size:16px;line-height:1;padding:8px 12px">🌙</button>
     <button class="btn btn-primary" id="btnRefresh">⟳ משיכת נתונים טריים</button>
   </div>
 </header>
@@ -1538,7 +1576,7 @@ function go(v){
   focused = null;
   if (v !== 'coal' && !coalition.size){ highlightSeats(null); setCore(TOTAL,'מושבים בכנסת',false); }
   if (v === 'coal') renderCoalition();
-  window.scrollTo({top:0, behavior:'smooth'});
+  // נשארים במקום שבו המשתמש גלל — לא קופצים למעלה במעבר טאב
 }
 document.addEventListener('click', e => {
   const tab = e.target.closest('.tab');           if (tab) return go(tab.dataset.v);
@@ -1567,6 +1605,16 @@ document.addEventListener('change', e => {
   }
 });
 document.getElementById('btnClear').onclick   = () => { coalition.clear(); renderCoalition(); };
+// מצב כהה/בהיר — נשמר ב-localStorage ומוחל בטעינה
+(function(){
+  const root = document.documentElement, btn = document.getElementById('btnTheme');
+  const apply = t => { root.setAttribute('data-theme', t); btn.textContent = t === 'dark' ? '☀️' : '🌙'; };
+  apply(localStorage.getItem('theme') || 'light');
+  btn.onclick = () => {
+    const t = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', t); apply(t);
+  };
+})();
 document.getElementById('btnRefresh').onclick = runRefresh;
 document.getElementById('btnRefresh2').onclick= runRefresh;
 document.getElementById('btnReset').onclick   = () => {
