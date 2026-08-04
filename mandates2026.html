@@ -622,7 +622,7 @@ http.createServer(async (req, res) => {
     <div style="font-family:var(--display);color:var(--brass);font-size:15px;margin-bottom:4px">נבנה ועוצב ע״י Evgeny Keidar</div>
     <div style="margin-bottom:14px">מצפה המנדטים · דשבורד סקרים לכנסת ה־26 · &copy; 2026 Evgeny Keidar. כל הזכויות שמורות.</div>
     <strong style="color:var(--muted)">מקורות ומגבלות.</strong>
-    נתוני הבסיס: מעריב (31.07), זמן ישראל (30.07), ערוץ 14 (29.07), חדשות 13 (29.07) ו־i24NEWS (27.07), נכון ל־31.07.2026. שאר המקורות נמשכים חיים בלשונית המקורות ומתמזגים לאותה בריכה, עם ניכוי כפילויות לפי סוקר ותאריך · מועד הבחירות לכנסת ה־26 נקבע ל־27.10.2026 על ידי יו״ר ועדת הבחירות המרכזית.
+    נתוני הבסיס: הסקר האחרון מכל ערוץ — ערוץ 12 (03.08), ערוץ 11 (02.08), ערוץ 13 (29.07), i24 (27.07) וערוץ 14 (26.07), כפי שתועדו בוויקיפדיה (המצטטת את הערוצים ואת n12). הערה: "בית ציוני – המילואימניקים" (ברית הנדל, ~23) היא מפלגה נפרדת מ"בית ציוני" הקטנה. שאר המקורות נמשכים חיים בלשונית המקורות ומתמזגים לאותה בריכה, עם ניכוי כפילויות לפי סוקר ותאריך · מועד הבחירות לכנסת ה־26 נקבע ל־27.10.2026 על ידי יו״ר ועדת הבחירות המרכזית.
     שמות יושבי ראש ואותיות פתק מוזנים ידנית בקובץ ואפשר לערוך אותם — אותיות לרשימות חדשות ייקבעו רק עם הגשת הרשימות.
     כללי הווטו הם פרשנות להצהרות פומביות ולא נתון מדיד. כלי עזר להצגה פנימית, לא תחזית בחירות ולא המלצת הצבעה.
   </div>
@@ -671,11 +671,13 @@ const BLOCS = {
 };
 
 const BASE_POLLS = [
-  {id:'maariv-20260731', pollster:'מעריב',     date:'2026-07-31', results:{likud:22,yashar:23,beyahad:15,ib:10,dem:9,utj:8,shas:7,otzma:7,raam:5,rzp:5,hadash:5,joint:0,bait:4,kl:0}},
-  {id:'zman-20260730',   pollster:'זמן ישראל', date:'2026-07-30', results:{likud:20,yashar:21,beyahad:13,ib:10,dem:8,utj:8,shas:8,otzma:7,raam:5,rzp:6,hadash:0,joint:6,bait:4,kl:4}},
-  {id:'ch14-20260729',   pollster:'ערוץ 14',   date:'2026-07-29', results:{likud:32,yashar:22,beyahad:7,ib:8,dem:10,utj:8,shas:10,otzma:7,raam:5,rzp:5,hadash:6,joint:0,bait:0,kl:0}},
-  {id:'ch13-20260729',   pollster:'חדשות 13',  date:'2026-07-29', results:{likud:23,yashar:23,beyahad:13,ib:10,dem:9,utj:9,shas:7,otzma:8,raam:5,rzp:4,hadash:4,joint:0,bait:5,kl:0}},
-  {id:'i24-20260727',    pollster:'i24NEWS',   date:'2026-07-27', results:{likud:29,yashar:21,beyahad:9,ib:9,dem:10,utj:8,shas:9,otzma:8,raam:5,rzp:5,hadash:0,joint:7,bait:0,kl:0}},
+  // הסקר האמיתי האחרון מכל ערוץ, כפי שתועד בוויקיפדיה (המצטטת את הערוצים ואת n12).
+  // "Zionist Home" בוויקיפדיה = המילואימניקים (reserv), מפלגה גדולה — נפרדת מ"בית ציוני" (bait) הקטנה.
+  {id:'ch12-20260803',  pollster:'ערוץ 12', date:'2026-08-03', results:{likud:23,yashar:10,beyahad:14,reserv:23,ib:9, dem:0, utj:8,shas:7, otzma:7,raam:5,rzp:5,hadash:0,joint:5,bait:0,kl:0}},
+  {id:'kan11-20260802', pollster:'ערוץ 11', date:'2026-08-02', results:{likud:23,yashar:8, beyahad:13,reserv:23,ib:9, dem:0, utj:8,shas:8, otzma:9,raam:5,rzp:4,hadash:0,joint:6,bait:0,kl:0}},
+  {id:'ch13-20260729',  pollster:'ערוץ 13', date:'2026-07-29', results:{likud:23,yashar:9, beyahad:13,reserv:23,ib:10,dem:0, utj:9,shas:7, otzma:8,raam:5,rzp:4,hadash:0,joint:4,bait:0,kl:0}},
+  {id:'i24-20260727',   pollster:'i24',     date:'2026-07-27', results:{likud:29,yashar:21,beyahad:9, reserv:0, ib:9, dem:10,utj:8,shas:9, otzma:8,raam:5,rzp:5,hadash:0,joint:7,bait:0,kl:0}},
+  {id:'ch14-20260726',  pollster:'ערוץ 14', date:'2026-07-26', results:{likud:32,yashar:12,beyahad:7, reserv:23,ib:6, dem:0, utj:7,shas:10,otzma:8,raam:5,rzp:6,hadash:0,joint:5,bait:0,kl:0}},
 ];
 
 /* כללי הרכבה — פרשנות להצהרות פומביות, ניתנים לכיבוי */
@@ -731,7 +733,7 @@ let chatHistory = [];
 
 const SOURCES = [
   {id:'seed', name:'נתוני בסיס מוטמעים', adapter:'seed', on:true, status:'ok', cors:'none', count:BASE_POLLS.length,
-   url:'', note:'5 סקרים מאומתים · מעריב, זמן ישראל, ערוץ 14, חדשות 13, i24 · 27–31.07.2026'},
+   url:'', note:'הסקר האחרון מכל ערוץ · ערוץ 11, 12, 13, 14, i24 · 26.07–03.08.2026 (מקור: ויקיפדיה)'},
 
   {id:'wiki_en', name:'ויקיפדיה EN · Opinion polling 2026', adapter:'wiki', on:true, status:'unk', cors:'open', count:0,
    url:'https://en.wikipedia.org/w/api.php?action=parse&page=Opinion_polling_for_the_2026_Israeli_legislative_election&prop=text&format=json&origin=*',
@@ -795,8 +797,8 @@ function recompute(){
   PARTIES.forEach(p => {
     COVERAGE[p.id] = POLLS.filter(x => (x.results?.[p.id] ?? 0) > 0).length / POLLS.length;
   });
-  const t = Object.values(AVG).reduce((a,b)=>a+b,0);
-  TOTAL = Math.round(t) || 120;
+  // הכנסת תמיד 120 מנדטים — קולות מתחת לסף החסימה ו"אחרים" מתחלקים מחדש בין העוברות.
+  TOTAL = 120;
   SEATS = largestRemainder(AVG, TOTAL);
   SOURCES.forEach(s => { s.count = POOL.filter(p => p.src === s.id).length; });
 }
@@ -1324,6 +1326,8 @@ const NAME2ID = (() => {
     'Bennett 2026':'bennett','Bennett':'bennett','Yashar':'yashar',
     "Ra'am":'raam','Raam':'raam','Hadash–Ta\'al':'hadash','Hadash-Ta\'al':'hadash','Hadash –Ta\'al':'hadash',
     'Balad':'balad','Joint List':'joint','Reserv.':'reserv','Reservists':'reserv','New Hope':'kl',
+    'Together':'beyahad','Zionist Home':'reserv',
+    'Zionist Home – The Reservists':'reserv','Zionist Home - The Reservists':'reserv',
   };
   Object.entries(alias).forEach(([k,v]) => {
     m[k] = v; m[k.replace(/["'׳״]/g,'')] = v; m[k.toLowerCase()] = v;
