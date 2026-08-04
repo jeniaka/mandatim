@@ -430,6 +430,53 @@ input[type=text],input[type=url],textarea.code{background:#fff;border:1px solid 
 .console{background:#1F1B16;border:1px solid var(--line);color:#D9CDBA}
 pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
 
+/* ---------- כפתור "סיכום מצע" בפתק ---------- */
+.platform-btn{
+  display:inline-block;margin-top:11px;font-family:var(--body);font-size:12px;font-weight:700;
+  padding:6px 14px;border-radius:999px;cursor:pointer;border:0;
+  background:var(--pc,#888);color:#fff;letter-spacing:.02em;
+  box-shadow:0 3px 9px -3px rgba(0,0,0,.5);transition:transform .12s, filter .15s;
+}
+.platform-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+/* ---------- מודל מצע ---------- */
+.modal-backdrop{
+  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:rgba(20,15,10,.62);backdrop-filter:blur(3px);padding:18px;animation:fade .2s ease;
+}
+.modal-backdrop[hidden]{display:none}
+.modal{
+  --pc:#888;position:relative;background:var(--panel);color:var(--text);
+  border:1px solid var(--line);border-top:5px solid var(--pc);border-radius:var(--r);
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.6);
+  width:min(560px,100%);max-height:88vh;overflow:auto;
+  padding:22px 24px 24px;text-align:right;direction:rtl;
+  animation:pop .22s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.modal-x{
+  position:absolute;top:12px;inset-inline-start:14px;border:0;background:transparent;
+  color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px 7px;border-radius:6px;
+}
+.modal-x:hover{color:var(--brass);background:rgba(0,0,0,.06)}
+.modal-head{display:flex;align-items:center;gap:14px;margin-bottom:15px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.modal-letter{
+  font-family:var(--display);font-weight:900;font-size:24px;line-height:1;
+  min-width:54px;height:54px;display:flex;align-items:center;justify-content:center;
+  border-radius:11px;background:var(--pc);color:#fff;padding:0 9px;flex:none;
+}
+.modal-name{font-family:var(--display);font-weight:700;font-size:22px;line-height:1.15}
+.modal-leader{font-size:13.5px;color:var(--muted);margin-top:3px}
+.modal-body{margin:0;padding:0;list-style:none}
+.modal-body li{position:relative;font-size:14.5px;line-height:1.5;margin:0 0 10px;padding-inline-start:17px}
+.modal-body li:last-child{margin-bottom:0}
+.modal-body li::before{content:"";position:absolute;inset-inline-start:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--pc)}
+@media(max-width:520px){
+  .modal{padding:17px}
+  .modal-name{font-size:19px}.modal-letter{font-size:21px;min-width:46px;height:46px}
+  .modal-body li{font-size:14px}
+}
+
 /* ============================================================
    מצב כהה — נבחר דרך data-theme="dark" על :root. גובר על ערכת
    הפוסטר בזכות specificity גבוה יותר. פתקי ההצבעה נשארים בהירים.
@@ -496,7 +543,6 @@ pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
       <b id="cd">—</b><span>ימים לקלפי</span>
     </div>
     <button class="btn btn-sm btn-ghost" id="btnTheme" aria-label="החלף מצב תצוגה" title="מצב כהה / בהיר" style="font-size:16px;line-height:1;padding:8px 12px">🌙</button>
-    <button class="btn btn-primary" id="btnRefresh">⟳ משיכת נתונים טריים</button>
   </div>
 </header>
 
@@ -516,7 +562,6 @@ pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
         <button class="wintab" role="tab" data-win="10" aria-selected="false">10 אחרונים</button>
         <button class="wintab" role="tab" data-win="0"  aria-selected="false">הכל</button>
       </div>
-      <button class="btn btn-sm btn-ghost" data-goto="src">ניהול מקורות</button>
     </div>
 
     <div class="chamber">
@@ -536,7 +581,6 @@ pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
     <button class="tab" role="tab" aria-selected="true" data-v="map">מפת המנדטים</button>
     <button class="tab" role="tab" aria-selected="false" data-v="coal">בונה הקואליציה</button>
     <button class="tab" role="tab" aria-selected="false" data-v="cmp">קרב הסוקרים</button>
-    <button class="tab" role="tab" aria-selected="false" data-v="src">מקורות ורענון</button>
   </div>
 
   <!-- ---------- VIEW: MAP ---------- -->
@@ -607,62 +651,29 @@ pre.snip{background:#1F1B16;border:1px solid var(--line);color:#E7DCC6}
     </div>
   </section>
 
-  <!-- ---------- VIEW: SOURCES ---------- -->
-  <section class="view" id="v-src">
-    <div class="panel">
-      <h3>מקורות נתונים</h3>
-      <p class="sub">הרענון מושך <em style="font-style:normal;color:var(--brass-2)">מכל</em> המקורות הדולקים ומאחד אותם לבריכה אחת, עם ניכוי כפילויות לפי סוקר+תאריך. הדליקו וכבו מקורות כדי לשנות את הבסיס, ובחרו למעלה על כמה סקרים לרוץ.</p>
-      <div class="verdict" id="envBanner" style="margin:0 0 14px;display:none"></div>
-      <div class="verdict" id="srcSummary" style="margin:0 0 16px;font-size:13.5px;color:var(--muted)"></div>
-      <div id="srcList"></div>
-      <label class="fl">קידומת פרוקסי (אופציונלי) — נדרש כשהשרת חוסם CORS. ה־URL של המקור מודבק אחריה.</label>
-      <input type="text" id="proxyPrefix" placeholder="https://my-proxy.internal/fetch?url=" value="">
-      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-        <button class="btn btn-primary" id="btnRefresh2">⟳ הרץ רענון</button>
-        <button class="btn btn-sm" id="btnLocalProxy">מלא פרוקסי מקומי</button>
-        <button class="btn btn-sm" id="btnPaste">הדבקת JSON ידנית</button>
-        <button class="btn btn-sm btn-ghost" id="btnReset">חזרה לנתוני הבסיס</button>
-      </div>
-      <label class="fl" style="margin-top:16px">יומן ריצה</label>
-      <div class="console" id="log"><span class="l-dim">מוכן.</span></div>
-    </div>
-
-    <div class="panel" id="pastePanel" style="display:none">
-      <h3>הדבקת JSON</h3>
-      <p class="sub">מבנה נתמך: מערך של סקרים, או אובייקט עם שדה polls.</p>
-      <textarea class="code" id="pasteBox" placeholder='[{"pollster":"מעריב","date":"2026-08-05","results":{"הליכוד":24,"ישר! עם איזנקוט":22}}]'></textarea>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn btn-primary btn-sm" id="btnPasteGo">טען</button>
-        <button class="btn btn-sm btn-ghost" id="btnPasteCancel">ביטול</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3>אם החיבור נחסם</h3>
-      <p class="sub">ויקיפדיה עובדת ישירות מהדפדפן: ה־Action API מחזיר <code style="font-family:var(--mono);font-size:12px;color:var(--brass-2)">Access-Control-Allow-Origin: *</code> כשמוסיפים <code style="font-family:var(--mono);font-size:12px;color:var(--brass-2)">origin=*</code> לכתובת. שאר האתרים לא מגישים כותרות CORS ולכן דורשים פרוקסי קטן אצלכם — הנה אחד:</p>
-      <pre class="snip">// proxy.js — node proxy.js  (then set prefix to http://localhost:8787/fetch?url=)
-const http = require('http'), { URL } = require('url');
-
-http.createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  const target = new URL(req.url, 'http://x').searchParams.get('url');
-  if (!target) { res.writeHead(400).end('missing url'); return; }
-  try {
-    const r = await fetch(target, { headers: { 'User-Agent': 'mandates-dashboard/1.0' } });
-    res.writeHead(r.status, { 'Content-Type': r.headers.get('content-type') || 'application/json' });
-    res.end(await r.text());
-  } catch (e) { res.writeHead(502).end(String(e)); }
-}).listen(8787, () => console.log('proxy on :8787'));</pre>
-    </div>
-  </section>
 
   <div class="foot">
     <div style="font-family:var(--display);color:var(--brass);font-size:15px;margin-bottom:4px">נבנה ועוצב ע״י Evgeny Keidar</div>
     <div style="margin-bottom:14px">מצפה המנדטים · דשבורד סקרים לכנסת ה־26 · &copy; 2026 Evgeny Keidar. כל הזכויות שמורות.</div>
     <strong style="color:var(--muted)">מקורות ומגבלות.</strong>
-    נתוני הבסיס: מעריב (31.07), זמן ישראל (30.07), ערוץ 14 (29.07), חדשות 13 (29.07) ו־i24NEWS (27.07), נכון ל־31.07.2026. שאר המקורות נמשכים חיים בלשונית המקורות ומתמזגים לאותה בריכה, עם ניכוי כפילויות לפי סוקר ותאריך · מועד הבחירות לכנסת ה־26 נקבע ל־27.10.2026 על ידי יו״ר ועדת הבחירות המרכזית.
+    נתוני הבסיס: הסקר האחרון מכל ערוץ — חדשות 12 (03.08), מעריב (31.07), זמן ישראל (30.07), ערוץ 14 (29.07), חדשות 13 (29.07) ו־i24NEWS (27.07) · מועד הבחירות לכנסת ה־26 נקבע ל־27.10.2026 על ידי יו״ר ועדת הבחירות המרכזית.
     שמות יושבי ראש ואותיות פתק מוזנים ידנית בקובץ ואפשר לערוך אותם — אותיות לרשימות חדשות ייקבעו רק עם הגשת הרשימות.
     כללי הווטו הם פרשנות להצהרות פומביות ולא נתון מדיד. כלי עזר להצגה פנימית, לא תחזית בחירות ולא המלצת הצבעה.
+  </div>
+</div>
+
+<!-- ---------- מודל: סיכום מצע מפלגה ---------- -->
+<div class="modal-backdrop" id="platformModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pmName">
+    <button class="modal-x" id="pmClose" aria-label="סגור">✕</button>
+    <div class="modal-head">
+      <div class="modal-letter" id="pmLetter"></div>
+      <div>
+        <div class="modal-name" id="pmName"></div>
+        <div class="modal-leader" id="pmLeader"></div>
+      </div>
+    </div>
+    <ul class="modal-body" id="pmBody"></ul>
   </div>
 </div>
 
@@ -953,6 +964,7 @@ function cardHTML(p, mode){
       ${sparkline(p.id)}
     </div>
     <div class="tagline">${tags.join('')}</div>
+    ${mode === 'map' && partyPlatforms[p.id] ? `<span class="platform-btn" data-platform="${p.id}" role="button" tabindex="0">סיכום מצע</span>` : ''}
   </button>`;
 }
 function renderCards(){
@@ -1282,12 +1294,14 @@ function diagnose(msg){
 }
 function log(msg, cls){
   const el = document.getElementById('log');
+  if (!el) return;
   const t = new Date().toLocaleTimeString('he-IL');
   el.innerHTML += `<div class="l-${cls||'dim'}">[${t}] ${msg}</div>`;
   el.scrollTop = el.scrollHeight;
 }
 const CORS_LBL = {open:['ok','CORS פתוח'], blocked:['fail','דורש פרוקסי'], none:['ok','מקומי'], unk:['unk','CORS לא ידוע']};
 function renderSources(){
+  if (!document.getElementById('srcList')) return;
   document.getElementById('srcList').innerHTML = SOURCES.map(s => {
     const [cc, ct] = CORS_LBL[s.cors] || CORS_LBL.unk;
     return `
@@ -1309,6 +1323,7 @@ function renderSources(){
 }
 function renderEnv(){
   const el = document.getElementById('envBanner');
+  if (!el) return;
   el.style.display = 'block';
   if (SANDBOXED){
     el.className = 'verdict bad';
@@ -1583,6 +1598,8 @@ document.addEventListener('click', e => {
   const gt  = e.target.closest('[data-goto]');    if (gt)  return go(gt.dataset.goto);
   const win = e.target.closest('[data-win]');
   if (win){ avgWindow = +win.dataset.win; recompute(); renderAll(); renderWindow(); renderSources(); return; }
+  const plat = e.target.closest('[data-platform]');
+  if (plat){ e.stopPropagation(); openPlatform(plat.dataset.platform); return; }
   const slip = e.target.closest('.slip');
   if (slip){
     if (slip.dataset.mode === 'coal'){ toggleParty(slip.dataset.id); return; }
@@ -1615,36 +1632,130 @@ document.getElementById('btnClear').onclick   = () => { coalition.clear(); rende
     localStorage.setItem('theme', t); apply(t);
   };
 })();
-document.getElementById('btnRefresh').onclick = runRefresh;
-document.getElementById('btnRefresh2').onclick= runRefresh;
-document.getElementById('btnReset').onclick   = () => {
-  POOL = BASE_POLLS.map(p => ({...p, src:'seed'}));
-  SOURCES.forEach(s => { s.status = s.adapter==='seed' ? 'ok' : 'unk'; s.on = (s.id==='seed'||s.id==='wiki_en'); });
-  avgWindow = 5;
-  recompute(); renderAll(); renderWindow(); renderSources();
-  log('הבריכה נוקתה. נשארו רק נתוני הבסיס.', 'ok');
+/* ---------- מצע מפלגה: נתונים + מודל ---------- */
+const partyPlatforms = {
+  likud: {letter:`מחל`, name:`הליכוד`, leader:`בנימין נתניהו`, summary:[
+    `מפלגת ימין לאומי-ליברלי, המפלגה הגדולה והוותיקה במחנה הימין.`,
+    `דגלה ביטחוני-מדיני: קו תקיף מול איראן, חמאס וחיזבאללה; התנגדות למדינה פלסטינית.`,
+    `תמיכה בהתיישבות ביהודה ושומרון וחיזוק הריבונות הישראלית.`,
+    `כלכלה: שוק חופשי, עידוד יזמות; בבחירות האחרונות גם הבטחות להורדת יוקר המחיה (הקפאת ארנונה/דלק/חשמל, חינוך חינם מגיל לידה).`,
+    `קידום רפורמות במערכת המשפט וחיזוק הרשות המבצעת מול היועמ"ש ובג"ץ.`,
+    `שמירה על יחסים אסטרטגיים עם ארה"ב והרחבת הסכמי אברהם.`,
+    `הערה: הליכוד אינו מפרסם מצע פורמלי מאז 2009; הסיכום מבוסס על עמדות מוצהרות.`,
+  ]},
+  yashar: {letter:`ישר`, name:`ישר! עם אייזנקוט`, leader:`גדי אייזנקוט`, summary:[
+    `מפלגת מרכז חדשה (2025) בראשות הרמטכ"ל לשעבר גדי אייזנקוט.`,
+    `אג'נדה של "מקצועיות", "אחריות" ו"שיקום לאומי" אחרי 7 באוקטובר.`,
+    `תמיכה בהקמת ועדת חקירה ממלכתית לאירועי המלחמה.`,
+    `ביטחון: קו תקיף ומקצועי, "ישראל חייבת לנצח".`,
+    `גיוס: חוק גיוס או שירות לאומי לכולם — כתנאי סף לכל קואליציה.`,
+    `מדיניות: איסור מו"מ עם מפלגות חרדיות וערביות; שאיפה ל"רוב ציוני".`,
+    `כלכלה: "מי שמשרת ועובד — מתועדף ומתוגמל"; מאבק ביוקר המחיה.`,
+    `עלייה וקליטה: יעד קליטת מיליוני עולים ושיקום הפריפריה.`,
+    `ביטחון פנים: קבינט לאומי למאבק בפשיעה המאורגנת והחזרת החוק לרחובות.`,
+  ]},
+  beyahad: {letter:`פה`, name:`ביחד`, leader:`נפתלי בנט (עם יאיר לפיד)`, summary:[
+    `רשימה מאוחדת (2026) של "בנט 2026" ו"יש עתיד", בראשות בנט ולפיד כ-#2.`,
+    `מפלגת ימין-מרכז ממלכתית; דגל "תיקון" והפסקת הקרבות הפנימיים.`,
+    `הקמת ועדת חקירה ממלכתית ל-7 באוקטובר ביום הראשון.`,
+    `ביטחון תקיף מול איראן, חמאס וחיזבאללה; ניהול אחראי של החזיתות.`,
+    `שוויון בנטל וקידום פתרון לסוגיית גיוס החרדים.`,
+    `דגש על חינוך, כלכלה חופשית, הייטק ומעמד הביניים.`,
+    `שמירה על אופייה היהודי-דמוקרטי של המדינה ועל מוסדות השלטון.`,
+    `הערה: הרשימה טרם פרסמה מצע פורמלי מלא; הסיכום מבוסס על התבטאויות ומצעי המפלגות המרכיבות.`,
+  ]},
+  dem: {letter:`אמת`, name:`הדמוקרטים`, leader:`יאיר גולן`, summary:[
+    `מפלגת שמאל-מרכז (איחוד העבודה ומרצ, במיתוג מחודש 2024).`,
+    `מדינה יהודית ודמוקרטית מחויבת לערכי מגילת העצמאות.`,
+    `חופש דת ושוויון זכויות מלא; מניעת מונופול דתי; תחבורה ציבורית מוגבלת בשבת באזורים חילוניים/מעורבים.`,
+    `מדיני: יוזמה מדינית להיפרדות אחראית מהפלסטינים — "לא לסיפוח, כן להיפרדות".`,
+    `ביטחון: דוקטרינה של יוזמה אסטרטגית מונעת מול איראן וצירי האיום.`,
+    `זכויות אדם, שוויון חברתי-כלכלי וחיזוק שלטון החוק.`,
+    `הגנה על מערכת המשפט ועל עצמאות בתי המשפט.`,
+  ]},
+  ib: {letter:`ל`, name:`ישראל ביתנו`, leader:`אביגדור ליברמן`, summary:[
+    `מפלגת ימין חילוני-לאומי, בסיס בציבור דובר הרוסית ובחילונים.`,
+    `הפרדת דת ומדינה: תחבורה ציבורית בשבת, נישואים אזרחיים, גיור מקל.`,
+    `שוויון בנטל: גיוס חובה לחרדים והפסקת פטורים והטבות.`,
+    `ביטחון: קו ניצי מאוד; התנגדות לפשרות מול ארגוני טרור.`,
+    `כלכלה: שוק חופשי, הפחתת מסים, תמיכה בפנסיונרים ובעולים.`,
+    `התנגדות חריפה למפלגות החרדיות ולסחיטה קואליציונית.`,
+  ]},
+  rzp: {letter:`ט`, name:`הציונות הדתית`, leader:`בצלאל סמוטריץ'`, summary:[
+    `מפלגת ימין דתי-לאומי, אידאולוגיה של ארץ ישראל השלמה.`,
+    `החלת ריבונות ישראלית ביהודה ושומרון והרחבת ההתיישבות.`,
+    `רפורמה עמוקה במערכת המשפט: פיצול מוסד היועמ"ש, ריסון בג"ץ.`,
+    `חיזוק הזהות היהודית של המדינה במרחב הציבורי ובחינוך.`,
+    `התנגדות למדינה פלסטינית ולפשרות טריטוריאליות.`,
+    `כלכלה ימנית עם דגש על התיישבות, מגזר דתי-לאומי ומשפחתיות.`,
+  ]},
+  otzma: {letter:`כף`, name:`עוצמה יהודית`, leader:`איתמר בן גביר`, summary:[
+    `מפלגת ימין קיצוני, לאומנית, בהמשך למורשת "כך".`,
+    `החזרת המשילות והחוק והסדר: יד קשה מול טרור ופשיעה.`,
+    `החמרת ענישה, הקלות בפתיחת אש ותמיכה נחרצת בכוחות הביטחון.`,
+    `החלת ריבונות מלאה ותמיכה מוחלטת בהתיישבות.`,
+    `עידוד "הגירה מרצון" והתנגדות לכל ויתור מדיני.`,
+    `חיזוק הזהות היהודית וריבונות יהודית בהר הבית.`,
+  ]},
+  shas: {letter:`שס`, name:`ש"ס`, leader:`אריה דרעי`, summary:[
+    `מפלגה חרדית-ספרדית, "להחזרת עטרה ליושנה".`,
+    `שמירה על אופייה היהודי-מסורתי של המדינה ועל מעמד הרבנות.`,
+    `הגנה על מוסדות התורה, ישיבות ופטור מגיוס לבני ישיבות.`,
+    `כלכלה חברתית: תמיכה בשכבות חלשות, קצבאות ותקצוב חינוך חרדי.`,
+    `שמירה על הסטטוס קוו הדתי (שבת, כשרות, נישואין).`,
+    `הערה: המפלגה אינה מפרסמת מצע פורמלי מפורט; הסיכום מבוסס על עמדות מוצהרות.`,
+  ]},
+  utj: {letter:`ג`, name:`יהדות התורה`, leader:`אגודת ישראל + דגל התורה`, summary:[
+    `מפלגה חרדית-אשכנזית המייצגת את הציבור החרדי-ליטאי והחסידי.`,
+    `מרכז הפעילות: הגנה על עולם התורה, ישיבות וכוללים.`,
+    `שמירה על פטור מגיוס לבני ישיבות ("תורתו אומנותו").`,
+    `שמירה על הסטטוס קוו הדתי ושמירת שבת במרחב הציבורי.`,
+    `תקצוב חינוך עצמאי חרדי ומוסדות דת; תמיכה במשפחות מרובות ילדים.`,
+    `הערה: המפלגה אינה מפרסמת מצע פורמלי מפורט; הסיכום מבוסס על עמדות מוצהרות.`,
+  ]},
+  hadash: {letter:`וום`, name:`חד"ש-תע"ל`, leader:`איימן עודה`, summary:[
+    `רשימה משותפת ערבית-יהודית (חד"ש) עם תע"ל.`,
+    `שוויון אזרחי מלא לאזרחים הערבים וסיום האפליה.`,
+    `פתרון שתי מדינות וסיום הכיבוש; מדינה פלסטינית לצד ישראל.`,
+    `צדק חברתי, זכויות עובדים ומאבק בפערים כלכליים.`,
+    `מאבק בגזענות, באלימות ובפשיעה בחברה הערבית.`,
+    `הפרדת דת ומדינה ושמירה על זכויות מיעוטים.`,
+  ]},
+  raam: {letter:`עם`, name:`רע"מ`, leader:`מנסור עבאס`, summary:[
+    `מפלגה ערבית אסלאמית (הפלג הדרומי של התנועה האסלאמית).`,
+    `פרגמטיזם פוליטי: נכונות לשתף פעולה למען האינטרסים של הציבור הערבי.`,
+    `קידום תקציבים, תשתיות ודיור ביישובים הערביים.`,
+    `מאבק נחוש בפשיעה ובאלימות בחברה הערבית.`,
+    `שמירה על הזהות הדתית-מוסלמית והמקומות הקדושים.`,
+    `שוויון אזרחי וצמצום פערים חברתיים-כלכליים.`,
+  ]},
+  bait: {letter:`ב`, name:`הבית ציוני`, leader:`חילי טרופר ויועז הנדל`, summary:[
+    `מפלגת מרכז-ימין ממלכתית חדשה.`,
+    `דגש על ממלכתיות, אחדות ישראלית וגישור על שסעים.`,
+    `ביטחון אחראי ומקצועי; שמירה על צה"ל כצבא העם.`,
+    `שוויון בנטל וקידום פתרון מוסכם לגיוס.`,
+    `שמירה על אופי יהודי-דמוקרטי ומוסדות שלטון תקינים.`,
+    `כלכלה יציבה, חינוך ומעמד הביניים.`,
+  ]},
 };
-/* צ'אט AI הוסר לבקשת המשתמש */
-document.getElementById('btnPaste').onclick = () => {
-  const p = document.getElementById('pastePanel');
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
-  if (p.style.display === 'block') p.scrollIntoView({behavior:'smooth', block:'center'});
-};
-document.getElementById('btnPasteCancel').onclick = () => document.getElementById('pastePanel').style.display = 'none';
-document.getElementById('btnPasteGo').onclick = () => {
-  try{
-    const polls = normalizePolls(JSON.parse(document.getElementById('pasteBox').value));
-    if (!polls.length) throw new Error('אפס סקרים אחרי מיפוי');
-    if (!SOURCES.find(s => s.id === 'paste'))
-      SOURCES.push({id:'paste', name:'JSON שהודבק ידנית', adapter:'seed', on:true, status:'ok', cors:'none', count:0, url:'', note:'נטען מהדבקה'});
-    const src = SOURCES.find(s => s.id === 'paste'); src.on = true; src.status = 'ok';
-    const {added, dup} = mergeIntoPool('paste', polls);
-    recompute(); renderAll(); renderWindow(); renderSources();
-    log(`הודבקו ${added} סקרים${dup?`, ${dup} כפולים דולגו`:''}.`, 'ok');
-    document.getElementById('pastePanel').style.display = 'none';
-    go('map');
-  }catch(e){ log('הדבקה נכשלה: ' + e.message, 'err'); }
-};
+function openPlatform(id){
+  const pf = partyPlatforms[id]; if (!pf) return;
+  const pc = (P[id] && P[id].color) || '#888';
+  const m = document.getElementById('platformModal');
+  m.querySelector('.modal').style.setProperty('--pc', pc);
+  document.getElementById('pmLetter').textContent = pf.letter || '•';
+  document.getElementById('pmName').textContent = pf.name;
+  document.getElementById('pmLeader').textContent = pf.leader || '';
+  document.getElementById('pmBody').innerHTML = pf.summary.slice(0, 25)
+    .map(line => `<li>${String(line).replace(/&/g,'&amp;').replace(/</g,'&lt;')}</li>`).join('');
+  m.hidden = false;
+  document.getElementById('pmClose').focus();
+}
+function closePlatform(){ document.getElementById('platformModal').hidden = true; }
+document.getElementById('pmClose').onclick = closePlatform;
+document.getElementById('platformModal').addEventListener('click', e => { if (e.target.id === 'platformModal') closePlatform(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlatform(); });
+/* מקורות ורענון הוסרו — נתוני בסיס מאומתים בלבד */
 
 // countdown
 (function tick(){
@@ -1654,16 +1765,6 @@ document.getElementById('btnPasteGo').onclick = () => {
 })();
 
 // boot
-document.getElementById('btnLocalProxy').onclick = async () => {
-  document.getElementById('proxyPrefix').value = '/api/fetch?url=';
-  try{
-    const r = await fetch('/api/health');
-    const j = await r.json();
-    log(`הפרוקסי חי · ${j.allowed.length} דומיינים מותרים`, 'ok');
-  }catch(e){
-    log(`הפרוקסי לא עונה על /api/health — ודאו ש-server.py רץ${diagnose(e.message)}`, 'err');
-  }
-};
 buildGeometry();
 recompute();
 renderAll();
